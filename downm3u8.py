@@ -77,15 +77,6 @@ os.system('ffmpeg.exe -i '+p+' '+pp)
 #删除无用文件
 filem3u8.close()
 f.close()
-filename_list = os.listdir(path)
-print(filename_list)
-for filename in filename_list:
-    filepath = os.path.join(dirpath,filename)
-    if os.path.isfile(filepath):
-        os.remove(filepath)
-    else:
-        myrmdir(filepath)
-os.rmdir(dirpath)
 
 
 a = input('Done. Press enter to exit.')
