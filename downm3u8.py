@@ -18,7 +18,7 @@ pattern1 = re.compile('\S*://\S+.alicdn.com/.*?/')
 name = re.search(pattern2,tmp).group(0)
 host = re.search(pattern1,tmp).group(0)
 path = './download/temp/'+ name +"/"
-head = {'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'}
+head = {'user-agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36 dingtalk-win/1.0.0 nw(0.14.7) DingTalk(5.0.15-Release.23) Mojo/1.0.0 Native AppType(release)'}
 n = 0
 total=0
 try: makedirs(path)
@@ -50,6 +50,8 @@ while True:
             break
         if tp2.startswith('#'):
             continue
+        #print(tp2)
+        tp2=tp2.strip();
         print(f'Downloading [{n+1}/{total}] ...',end='')
         sys.stdout.flush()
         re = x.get((host+tp2), headers=head, verify=False)
