@@ -7,6 +7,9 @@ import os
 import re
 import sys
 
+def dl_aria2(url,dir,name):
+    os.system(f"aria2c -o {name} --dir={dir} \"{url}\"");
+
 packages.urllib3.disable_warnings()
 x = session()
 
@@ -17,19 +20,16 @@ pattern1 = re.compile('\S*://\S+.alicdn.com/.*?/')
 
 name = re.search(pattern2,tmp).group(0)
 host = re.search(pattern1,tmp).group(0)
-path = './download/temp/'+ name +"/"
-head = {'user-agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36 dingtalk-win/1.0.0 nw(0.14.7) DingTalk(5.0.15-Release.23) Mojo/1.0.0 Native AppType(release)'}
+path = 'download/temp/'+ name +"/"
+head = {'user-agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36 dingtalk-win/1.0.0 nw(0.14.7) DingTalk(6.0.8-Release.30803) Mojo/1.0.0 Native AppType(release) Channel/201200'}
 n = 0
 total=0
-try: makedirs(path)
-except: pass
-end = b'<Code>NoSuchKey</Code>'
+try: 
+    makedirs(path)
+except: 
+    pass
 
-re = x.get(tmp,headers=head, verify=False)
-ff = open(path+name+'.m3u8','wb') 
-ff.write(re.content)
-ff.close()
-
+dl_aria2(tmp,path,name+".m3u8")
 filem3u8=open(path+name+'.m3u8')
 
 while True:
@@ -41,6 +41,7 @@ while True:
     total+=1
 
 filem3u8.seek(0)
+
 # 下载
 while True:
     try:
@@ -54,12 +55,10 @@ while True:
         tp2=tp2.strip();
         print(f'Downloading [{n+1}/{total}] ...',end='')
         sys.stdout.flush()
-        re = x.get((host+tp2), headers=head, verify=False)
+        dl_aria2(host+tp2,path,f"{n+1}.ts")
     except Exception as e:
-        print(f'Fail to download {n+1}.ts due to {e}')
-        break        
-    with open(f'{path}{n+1}.ts','wb') as f:
-        f.write(re.content)
+        print(f'Fail to download {n+1}.ts \n {e}')
+        break
     n+=1
     print('[done]')
 
@@ -72,13 +71,9 @@ with open(p, 'wb') as f:
             f.write(tmp.read())
         remove(f'{path}{i+1}.ts')
 
-# 转换
-pp =  './download/'+name+'.mp4'
-os.system('ffmpeg.exe -i '+p+' '+pp)
-
 #删除无用文件
 filem3u8.close()
 f.close()
-
+remove(f'{path}{name}.m3u8')
 
 a = input('Done. Press enter to exit.')
